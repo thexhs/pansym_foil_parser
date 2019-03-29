@@ -11,6 +11,7 @@ object Form1: TForm1
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object btnFoil: TButton
@@ -42,6 +43,7 @@ object Form1: TForm1
       '8'
       '10')
     TabOrder = 1
+    OnClick = rgdVClick
   end
   object Button4: TButton
     Left = 8
@@ -106,6 +108,7 @@ object Form1: TForm1
     ActivePage = TabSheet4
     MultiLine = True
     Style = tsFlatButtons
+    TabIndex = 3
     TabOrder = 6
     object TabSheet1: TTabSheet
       Caption = 'Airfoil'
@@ -252,6 +255,14 @@ object Form1: TForm1
     Height = 25
     Caption = 'GET OU'
     TabOrder = 14
+  end
+  object Button1: TButton
+    Left = 80
+    Top = 496
+    Width = 75
+    Height = 25
+    Caption = 'Button1'
+    TabOrder = 15
   end
   object OpenDialog1: TOpenDialog
     Left = 8

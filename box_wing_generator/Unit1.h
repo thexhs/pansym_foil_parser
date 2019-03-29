@@ -38,6 +38,7 @@ __published:	// IDE-managed Components
    TButton *btnVisual;
    TButton *btnOU2GEO;
    TButton *Button10;
+        TButton *Button1;
         void __fastcall btnFoilClick(TObject *Sender);
         void __fastcall btnPANSYMClick(TObject *Sender);
         void __fastcall rgZClick(TObject *Sender);
@@ -49,10 +50,13 @@ __published:	// IDE-managed Components
    void __fastcall btnMakeInClick(TObject *Sender);
    void __fastcall btnOU2GEOClick(TObject *Sender);
    void __fastcall btnVisualClick(TObject *Sender);
+        void __fastcall FormShow(TObject *Sender);
+        void __fastcall rgdVClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);
         AnsiString FmtStr72(AnsiString InputStr);
+        void ConvertASC(void);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

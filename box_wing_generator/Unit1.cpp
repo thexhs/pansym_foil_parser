@@ -9,6 +9,12 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
+
+#define ITS IntToStr
+#define STI StrToInt
+#define FTS FloatToStr
+#define STF StrToFloat
+
 TForm1 *Form1;
 AnsiString FileName;
 //---------------------------------------------------------------------------
@@ -19,6 +25,22 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 //---------------------------------------------------------------------------
 //Global values
 //---------------------------------------------------------------------------
+//Get command_line parameter
+AnsiString param1 = ParamStr(1);    //-infile/-pansym
+AnsiString param2 = ParamStr(2);    //Layout number 1..8
+AnsiString param3 = ParamStr(3);    //Z = 0.25/0.50/0.75/0.90
+AnsiString param4 = ParamStr(4);    //Wing 0/1
+AnsiString param5 = ParamStr(5);    //Deflection -10..10
+//Application state control struct
+struct T_ASC {
+   int R;
+   double Z;
+   int Wing;
+   int dV;
+   bool GUI;
+   bool CMD;
+};
+T_ASC ASC = {1, 0.25, 1, -10, True, False};
 //X position of Wing for R01 layout
 double X_end_PK = 1.908;
 double X_end_ZK = 3.735;
@@ -88,43 +110,7 @@ AnsiString TForm1::FmtStr72(AnsiString InputStr)
 //---------------------------------------------------------------------------
 void __fastcall TForm1::rgRClick(TObject *Sender)
 {
-   if ((rgR->ItemIndex == 0)||(rgR->ItemIndex == 4)){   //R01 ||  R05
-      X_end_PK = 1.908;
-      X_end_ZK = 3.735;
-      X_w_offset = 0;
-      X_w_offset1 = 0;
-   }
-   if ((rgR->ItemIndex == 1)||(rgR->ItemIndex == 5)){   //R02 ||  R06
-      X_end_PK = 0.957;
-      X_end_ZK = 2.784;
-      X_w_offset = -0.95;
-      X_w_offset1 = 0;
-   }
-   if ((rgR->ItemIndex == 2)||(rgR->ItemIndex == 6)){   //R03 ||  R07
-      X_end_PK = 2.695;
-      X_end_ZK = 4.522;
-      X_w_offset = 0.785;
-      X_w_offset1 = 0.003;
-   }
-   if ((rgR->ItemIndex == 3)||(rgR->ItemIndex == 7)){   //R04 ||  R08
-      X_end_PK = 3.482;
-      X_end_ZK = 5.348;
-      X_w_offset = 1.611;
-      X_w_offset1 = -0.036;
-   }
-   X_int_PK = X_end_PK/0.9*Z_otn;
-   X_int_ZK = X_start_ZK-(X_start_ZK-X_end_ZK)/0.9*Z_otn;
-   if(rgR->ItemIndex >= 4) {
-      Y_ZK = -0.08;
-      Y_PK = 2;
-      is_w_Revers = True;
-   }
-   else {
-      Y_ZK = 2;
-      Y_PK = -0.08;
-      is_w_Revers = False;
-   }
-   Phi_ZK = Phi_ZK1[rgR->ItemIndex];
+   ASC.R = rgR->ItemIndex+1;
 }
 //---------------------------------------------------------------------------
 //    Select elevator span
@@ -132,23 +118,20 @@ void __fastcall TForm1::rgRClick(TObject *Sender)
 void __fastcall TForm1::rgZClick(TObject *Sender)
 {
 if (rgZ->ItemIndex == 0)
-   Z_otn = 0.25;
+   ASC.Z = 0.25;
 if (rgZ->ItemIndex == 1)
-   Z_otn = 0.50;
+   ASC.Z = 0.50;
 if (rgZ->ItemIndex == 2)
-   Z_otn = 0.75;
+   ASC.Z = 0.75;
 if (rgZ->ItemIndex == 3)
-   Z_otn = 0.90;
+   ASC.Z = 0.90;
 }
 //---------------------------------------------------------------------------
 //    Select wing with elevator
 //---------------------------------------------------------------------------
 void __fastcall TForm1::rgWingClick(TObject *Sender)
 {
-   if (rgWing->ItemIndex == 0)
-      isForward = True;
-   else
-      isForward = False;
+   ASC.Wing = rgWing->ItemIndex;
 }
 //---------------------------------------------------------------------------
 //    FILE WRITE SECTION
@@ -158,10 +141,7 @@ void __fastcall TForm1::rgWingClick(TObject *Sender)
 void __fastcall TForm1::btnFoilClick(TObject *Sender)
 {
    #define MALL mAirfoil->Lines->LoadFromFile
-   int Start = -10;
-   int Step = 2;
-   int Current = Start+rgdV->ItemIndex*Step;
-   MALL(exePath+"\\airfoil\\P-273-FLAP_"+IntToStr(Current)+".txt");
+   MALL(exePath+"\\airfoil\\P-273-FLAP_"+ITS(ASC.dV)+".txt");
    mAirfoil->Lines->SaveToFile(exePath+"\\files\\airfoil_w_elevator.txt");
 }
 //---------------------------------------------------------------------------
@@ -169,9 +149,8 @@ void __fastcall TForm1::btnFoilClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TForm1::btnWingClick(TObject *Sender)
 {
+   Form1->ConvertASC();
    #define M4LA mWing->Lines->Add
-   #define ITS IntToStr
-   #define FTS FloatToStr
    //Small hack, special case, Z = 0.9 mimic with Z = 0.75 and elevator on two part
    bool isZ09 = False;
    if (Z_otn == 0.9)
@@ -286,15 +265,12 @@ void __fastcall TForm1::btnWingClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TForm1::btnWingletClick(TObject *Sender)
 {
+   Form1->ConvertASC();
    #define MW2LA mWinglet->Lines->Add
-   #define ITS IntToStr
-   #define FTS FloatToStr
    mWinglet->Clear();
    //First SECTION
    AnsiString S = "";
-   //Strange triks for remowing last line
-   //mWinglet->SetTextBuf(("#winglet R0"+ITS(rgR->ItemIndex+1)).c_str());
-   MW2LA("#winglet R0"+ITS(rgR->ItemIndex+1));
+   MW2LA("#winglet R0"+ITS(ASC.R));
    MW2LA(" -5  2  0 13-18  0  0                     0");
    MW2LA(" NE IT IB NS NU II NI UI NL IC IM IP IM ICO   ICOE");
    MW2LA("< NP  >< Xm  >< Ym  >< Zm  ><Ch m >< Fi  >");
@@ -378,4 +354,99 @@ void __fastcall TForm1::btnOU2GEOClick(TObject *Sender)
 void __fastcall TForm1::btnVisualClick(TObject *Sender)
 {
    ShellExecute(0, "open", "Visual.exe", "output.geo", "", SW_SHOWNORMAL);
+}
+
+void __fastcall TForm1::FormShow(TObject *Sender)
+{
+   //Parse comandline arguments and create Application Control Struct
+   if (param1!="") {
+      ASC.CMD = True;
+      ASC.GUI = False;
+   }
+   if (ASC.CMD) {
+      ASC.R = STI(param2);
+      if (param3 == "0.25") ASC.Z = 0.25;
+      if (param3 == "0.50") ASC.Z = 0.50;
+      if (param3 == "0.75") ASC.Z = 0.75;
+      if (param3 == "0.90") ASC.Z = 0.90;
+      ASC.Wing = STI(param4);
+      ASC.dV = STI(param5);
+      mInFile->Lines->Add(ITS(ASC.R)+" "+FTS(ASC.Z)+" "+ITS(ASC.Wing)+" "+ITS(ASC.dV));
+   }
+   if (param1 == "-infile") {
+      Form1->btnAutoClick(NULL);
+      Form1->btnMakeInClick(NULL);
+      Form1->Close();
+   }
+   if (param1 == "-pansym") {
+      Form1->btnAutoClick(NULL);
+      Form1->btnMakeInClick(NULL);
+      ShellExecute(0, "open", "Pansym98.exe", "output.in", "", SW_SHOWNORMAL);
+      Form1->Close();
+
+   }
+   /*if (param1 == "-visual") {
+      Form1->btnAutoClick(NULL);
+      Form1->btnMakeInClick(NULL);
+      ShellExecute(0, "open", "Pansym98.exe", "output.in", "", SW_SHOWNORMAL);
+      ShellExecute(0, "open", "OU2GEO.exe", "output.ou", "", SW_SHOWNORMAL);
+      ShellExecute(0, "open", "VISUAL.exe", "output.geo", "", SW_SHOWNORMAL);
+      Form1->Close();
+   } */
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::rgdVClick(TObject *Sender)
+{
+   int Start = -10;
+   int Step = 2;
+   ASC.dV = Start+rgdV->ItemIndex*Step;
+}
+//---------------------------------------------------------------------------
+//      Get Data from App. Control Struct into set of global variables
+//---------------------------------------------------------------------------
+void TForm1::ConvertASC(void)
+{
+   //Convert ASC variable in old
+   Z_otn = ASC.Z;
+   if (ASC.Wing==0) isForward = True;
+   if (ASC.Wing==1) isForward = False;
+
+   if ((ASC.R == 1)||(ASC.R == 5)){   //R01 ||  R05
+      X_end_PK = 1.908;
+      X_end_ZK = 3.735;
+      X_w_offset = 0;
+      X_w_offset1 = 0;
+   }
+   if ((ASC.R == 2)||(ASC.R == 6)){   //R02 ||  R06
+      X_end_PK = 0.957;
+      X_end_ZK = 2.784;
+      X_w_offset = -0.95;
+      X_w_offset1 = 0;
+   }
+   if ((ASC.R == 3)||(ASC.R == 7)){   //R03 ||  R07
+      X_end_PK = 2.695;
+      X_end_ZK = 4.522;
+      X_w_offset = 0.785;
+      X_w_offset1 = 0.003;
+   }
+   if ((ASC.R == 4)||(ASC.R == 8)){   //R04 ||  R08
+      X_end_PK = 3.482;
+      X_end_ZK = 5.348;
+      X_w_offset = 1.611;
+      X_w_offset1 = -0.036;
+   }
+   X_int_PK = X_end_PK/0.9*Z_otn;
+   X_int_ZK = X_start_ZK-(X_start_ZK-X_end_ZK)/0.9*Z_otn;
+   if(ASC.R >= 5) {
+      Y_ZK = -0.08;
+      Y_PK = 2;
+      is_w_Revers = True;
+   }
+   else {
+      Y_ZK = 2;
+      Y_PK = -0.08;
+      is_w_Revers = False;
+   }
+   Phi_ZK = Phi_ZK1[ASC.R-1];
 }
