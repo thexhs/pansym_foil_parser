@@ -13,27 +13,18 @@ object Form1: TForm1
   OldCreateOrder = False
   PixelsPerInch = 96
   TextHeight = 13
-  object Button1: TButton
-    Left = 88
-    Top = 8
-    Width = 75
-    Height = 25
-    Caption = 'Replace foil'
-    TabOrder = 0
-    OnClick = Button1Click
-  end
-  object Button2: TButton
+  object btnFoil: TButton
     Left = 8
-    Top = 8
+    Top = 280
     Width = 75
     Height = 25
-    Caption = 'Open IN'
-    TabOrder = 1
-    OnClick = Button2Click
+    Caption = 'FOIL'
+    TabOrder = 0
+    OnClick = btnFoilClick
   end
   object rgdV: TRadioGroup
     Left = 128
-    Top = 48
+    Top = 8
     Width = 57
     Height = 265
     Caption = 'dV'
@@ -50,29 +41,19 @@ object Form1: TForm1
       '6'
       '8'
       '10')
-    TabOrder = 2
-    OnClick = rgdVClick
-  end
-  object Button3: TButton
-    Left = 248
-    Top = 8
-    Width = 75
-    Height = 25
-    Caption = 'Run PANSYM'
-    TabOrder = 3
-    OnClick = Button3Click
+    TabOrder = 1
   end
   object Button4: TButton
-    Left = 328
-    Top = 8
+    Left = 8
+    Top = 408
     Width = 75
     Height = 25
     Caption = 'Get Data'
-    TabOrder = 4
+    TabOrder = 2
   end
   object rgR: TRadioGroup
     Left = 8
-    Top = 48
+    Top = 8
     Width = 49
     Height = 265
     Caption = 'R'
@@ -86,12 +67,12 @@ object Form1: TForm1
       '06'
       '07'
       '08')
-    TabOrder = 5
+    TabOrder = 3
     OnClick = rgRClick
   end
   object rgZ: TRadioGroup
     Left = 64
-    Top = 48
+    Top = 8
     Width = 57
     Height = 145
     Caption = 'Z'
@@ -101,12 +82,12 @@ object Form1: TForm1
       '0.50'
       '0.75'
       '0.90')
-    TabOrder = 6
+    TabOrder = 4
     OnClick = rgZClick
   end
   object rgWing: TRadioGroup
     Left = 64
-    Top = 200
+    Top = 160
     Width = 57
     Height = 113
     Caption = 'Wing'
@@ -114,21 +95,21 @@ object Form1: TForm1
     Items.Strings = (
       'PK'
       'ZK')
-    TabOrder = 7
+    TabOrder = 5
     OnClick = rgWingClick
   end
   object PageControl1: TPageControl
     Left = 192
-    Top = 56
+    Top = 16
     Width = 801
-    Height = 465
-    ActivePage = TabSheet2
+    Height = 505
+    ActivePage = TabSheet4
     MultiLine = True
     Style = tsFlatButtons
-    TabOrder = 8
+    TabOrder = 6
     object TabSheet1: TTabSheet
       Caption = 'Airfoil'
-      object Memo1: TMemo
+      object mAirfoil: TMemo
         Left = 0
         Top = 4
         Width = 793
@@ -145,9 +126,9 @@ object Form1: TForm1
       end
     end
     object TabSheet2: TTabSheet
-      Caption = 'Wing Description'
+      Caption = 'WING'
       ImageIndex = 1
-      object Memo4: TMemo
+      object mWing: TMemo
         Left = 0
         Top = 5
         Width = 793
@@ -163,9 +144,9 @@ object Form1: TForm1
       end
     end
     object TabSheet3: TTabSheet
-      Caption = 'TabSheet3'
+      Caption = 'WINGLET'
       ImageIndex = 2
-      object Memo3: TMemo
+      object mWinglet: TMemo
         Left = 0
         Top = 4
         Width = 793
@@ -182,9 +163,9 @@ object Form1: TForm1
       end
     end
     object TabSheet4: TTabSheet
-      Caption = 'TabSheet4'
+      Caption = 'IN FILE'
       ImageIndex = 3
-      object Memo2: TMemo
+      object mInFile: TMemo
         Left = 0
         Top = 5
         Width = 793
@@ -201,26 +182,79 @@ object Form1: TForm1
       end
     end
   end
-  object Button5: TButton
-    Left = 168
-    Top = 8
+  object btnWing: TButton
+    Left = 8
+    Top = 312
     Width = 75
     Height = 25
-    Caption = 'Test Wing'
-    TabOrder = 9
-    OnClick = Button5Click
+    Caption = 'WING'
+    TabOrder = 7
+    OnClick = btnWingClick
   end
-  object Button6: TButton
-    Left = 408
-    Top = 8
+  object btnWinglet: TButton
+    Left = 8
+    Top = 344
     Width = 75
     Height = 25
-    Caption = 'Test Winglet'
+    Caption = 'WINGLET'
+    TabOrder = 8
+    OnClick = btnWingletClick
+  end
+  object btnAuto: TButton
+    Left = 88
+    Top = 280
+    Width = 75
+    Height = 25
+    Caption = 'AUTO'
+    TabOrder = 9
+    OnClick = btnAutoClick
+  end
+  object btnMakeIn: TButton
+    Left = 88
+    Top = 312
+    Width = 75
+    Height = 25
+    Caption = 'MAKE FILE'
     TabOrder = 10
-    OnClick = Button6Click
+    OnClick = btnMakeInClick
+  end
+  object btnPANSYM: TButton
+    Left = 88
+    Top = 344
+    Width = 75
+    Height = 25
+    Caption = 'Run PANSYM'
+    TabOrder = 11
+    OnClick = btnPANSYMClick
+  end
+  object btnVisual: TButton
+    Left = 8
+    Top = 376
+    Width = 75
+    Height = 25
+    Caption = 'VISUAL'
+    TabOrder = 12
+    OnClick = btnVisualClick
+  end
+  object btnOU2GEO: TButton
+    Left = 88
+    Top = 376
+    Width = 75
+    Height = 25
+    Caption = 'MAKE GEO'
+    TabOrder = 13
+    OnClick = btnOU2GEOClick
+  end
+  object Button10: TButton
+    Left = 88
+    Top = 408
+    Width = 75
+    Height = 25
+    Caption = 'GET OU'
+    TabOrder = 14
   end
   object OpenDialog1: TOpenDialog
-    Left = 960
-    Top = 8
+    Left = 8
+    Top = 440
   end
 end
