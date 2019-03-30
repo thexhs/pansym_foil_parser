@@ -385,14 +385,28 @@ void __fastcall TForm1::FormShow(TObject *Sender)
       Form1->Close();
 
    }
-   /*if (param1 == "-visual") {
+   if (param1 == "-visual") {
       Form1->btnAutoClick(NULL);
       Form1->btnMakeInClick(NULL);
-      ShellExecute(0, "open", "Pansym98.exe", "output.in", "", SW_SHOWNORMAL);
-      ShellExecute(0, "open", "OU2GEO.exe", "output.ou", "", SW_SHOWNORMAL);
+      int PansymHandle = 0;
+      //
+      STARTUPINFO cif;
+      ZeroMemory(&cif,sizeof(STARTUPINFO));
+      PROCESS_INFORMATION pi;
+      //Run PANSYM in while loop
+      do {
+        CreateProcess("Pansym98.exe"," output.in",
+	   NULL,NULL,FALSE,NULL,NULL,exePath.c_str(),&cif,&pi);
+      } while (WaitForSingleObject(pi.hProcess,INFINITE));
+      //Run OU2GEO converter in while loop
+      do {
+        CreateProcess("OU2GEO.exe"," output.ou",
+	   NULL,NULL,FALSE,NULL,NULL,exePath.c_str(),&cif,&pi);
+      } while (WaitForSingleObject(pi.hProcess,INFINITE));
+      //After all run Visual viewer
       ShellExecute(0, "open", "VISUAL.exe", "output.geo", "", SW_SHOWNORMAL);
       Form1->Close();
-   } */
+   }
 }
 //---------------------------------------------------------------------------
 
