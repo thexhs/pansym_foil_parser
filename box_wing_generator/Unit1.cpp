@@ -40,7 +40,7 @@ struct T_ASC {
    bool GUI;
    bool CMD;
 };
-T_ASC ASC = {1, 0.25, 1, -10, True, False};
+T_ASC ASC = {1, 0.25, 0, -10, True, False};
 //X position of Wing for R01 layout
 double X_end_PK = 1.908;
 double X_end_ZK = 3.735;
@@ -415,8 +415,6 @@ void __fastcall TForm1::FormShow(TObject *Sender)
    }
    if (param1 == "-output") {
       Form1->btnMakeInClick(NULL);
-      int PansymHandle = 0;
-      //
       STARTUPINFO cif;
       ZeroMemory(&cif,sizeof(STARTUPINFO));
       PROCESS_INFORMATION pi;
@@ -439,21 +437,22 @@ void __fastcall TForm1::FormShow(TObject *Sender)
    }
    if (param1 == "-visual") {
       Form1->btnMakeInClick(NULL);
-      int PansymHandle = 0;
-      //
-      STARTUPINFO cif;
-      ZeroMemory(&cif,sizeof(STARTUPINFO));
-      PROCESS_INFORMATION pi;
+      STARTUPINFO cif1;
+      ZeroMemory(&cif1,sizeof(STARTUPINFO));
+      PROCESS_INFORMATION pi1;
       //Run PANSYM in while loop
       do {
         CreateProcess("Pansym98.exe"," output.in",
-	   NULL,NULL,FALSE,NULL,NULL,exePath.c_str(),&cif,&pi);
-      } while (WaitForSingleObject(pi.hProcess,INFINITE));
+	   NULL,NULL,FALSE,NULL,NULL,exePath.c_str(),&cif1,&pi1);
+      } while (WaitForSingleObject(pi1.hProcess,INFINITE));
       //Run OU2GEO converter in while loop
+      STARTUPINFO cif2;
+      ZeroMemory(&cif2,sizeof(STARTUPINFO));
+      PROCESS_INFORMATION pi2;
       do {
         CreateProcess("OU2GEO.exe"," output.ou",
-	   NULL,NULL,FALSE,NULL,NULL,exePath.c_str(),&cif,&pi);
-      } while (WaitForSingleObject(pi.hProcess,INFINITE));
+	   NULL,NULL,FALSE,NULL,NULL,exePath.c_str(),&cif2,&pi2);
+      } while (WaitForSingleObject(pi2.hProcess,INFINITE));
       //After all run Visual viewer
       ShellExecute(0, "open", "VISUAL.exe", "output.geo", "", SW_SHOWNORMAL);
       Form1->Close();
