@@ -77,6 +77,10 @@ double Phi_mult[13] = {1,1,
                         0.30769,
                         0,0,0,0,0,0,0};
 
+//X_f position for R01..R08 layouts
+double X_f[8] = {2.899, 2.323, 3.411, 3.920,
+                 2.993, 2.423, 3.477, 3.991};                        
+
 double X_w_offset = 0;
 double X_w_offset1 = 0;
 bool is_w_Revers = False;
@@ -310,10 +314,32 @@ void __fastcall TForm1::btnWingletClick(TObject *Sender)
    mWinglet->Lines->SaveToFile(exePath+"\\files\\winglet.txt");
 }
 //---------------------------------------------------------------------------
+//    Write first 5 lines of output file - HEAD
+//---------------------------------------------------------------------------
+void __fastcall TForm1::btnHeadClick(TObject *Sender)
+{
+   Form1->ConvertASC();
+   #define MHLA mHead->Lines->Add
+   mHead->Clear();
+   //First SECTION
+   AnsiString S = "";
+   MHLA("BOX WING R0"+ITS(ASC.R));
+   MHLA("suMekRprNchRreGplVreAitRdsGgrFneLlnTprHviS");
+   MHLA("  1  0  1 -1 22  0  1  0  0  1  0  0  0  0");
+   MHLA(" Sk     Bk     Lk     Xc     Yc     Zc     rvr    dp     xend   Smid   dAlfkr Cx0");
+   S = " 20     1      10     ";
+   S += FmtStr72(FTS(X_f[ASC.R-1]-0.3));
+   S += " 0.0   0.      0.05    0.1    20.    .62   0.     .0123";
+   MHLA(S);
+   mHead->Lines->SaveToFile(exePath+"\\files\\config.txt");
+}
+
+//---------------------------------------------------------------------------
 //    Btn Click Simulation
 //---------------------------------------------------------------------------
 void __fastcall TForm1::btnAutoClick(TObject *Sender)
 {
+   Form1->btnHead->Click();
    Form1->btnFoil->Click();
    Form1->btnWing->Click();
    Form1->btnWinglet->Click();
@@ -323,19 +349,29 @@ void __fastcall TForm1::btnAutoClick(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TForm1::btnMakeInClick(TObject *Sender)
 {
-std::ifstream if_head((exePath+"\\files\\head.txt").c_str(), std::ios_base::binary);
-std::ifstream if_airfoil_w_elevator((exePath+"\\files\\airfoil_w_elevator.txt").c_str(), std::ios_base::binary);
-std::ifstream if_remain_foil((exePath+"\\files\\remain_foil.txt").c_str(), std::ios_base::binary);
-std::ifstream if_wing((exePath+"\\files\\wing.txt").c_str(), std::ios_base::binary);
-std::ifstream if_winglet((exePath+"\\files\\winglet.txt").c_str(), std::ios_base::binary);
-std::ifstream if_trail((exePath+"\\files\\trail.txt").c_str(), std::ios_base::binary);
+   Form1->btnAutoClick(NULL);
 
-std::ofstream of_output((exePath+"\\output.in").c_str(), std::ios_base::binary);
+   #define SIBB std::ios_base::binary
+   #define SIFS std::ifstream
+   #define SOFS std::ofstream
 
-of_output << if_head.rdbuf() << if_airfoil_w_elevator.rdbuf() <<
-             if_remain_foil.rdbuf() << if_wing.rdbuf() <<
-             if_winglet.rdbuf() << if_trail.rdbuf();
-of_output.close();
+   SIFS if_config((exePath+"\\files\\config.txt").c_str(), SIBB);
+   SIFS if_head((exePath+"\\files\\head.txt").c_str(), SIBB);
+   SIFS if_airfoil_w_elevator((exePath+"\\files\\airfoil_w_elevator.txt").c_str(),
+                              SIBB);
+   SIFS if_remain_foil((exePath+"\\files\\remain_foil.txt").c_str(), SIBB);
+   SIFS if_wing((exePath+"\\files\\wing.txt").c_str(), SIBB);
+   SIFS if_winglet((exePath+"\\files\\winglet.txt").c_str(), SIBB);
+   SIFS if_trail((exePath+"\\files\\trail.txt").c_str(), SIBB);
+
+   SOFS of_output((exePath+"\\output.in").c_str(), SIBB);
+
+   of_output << if_config.rdbuf() << if_head.rdbuf() <<
+                if_airfoil_w_elevator.rdbuf() <<
+                if_remain_foil.rdbuf() << if_wing.rdbuf() <<
+                if_winglet.rdbuf() << if_trail.rdbuf();
+
+   of_output.close();
    mInFile->Lines->LoadFromFile(exePath+"\output.in");
 }
 //---------------------------------------------------------------------------
@@ -374,19 +410,16 @@ void __fastcall TForm1::FormShow(TObject *Sender)
       mInFile->Lines->Add(ITS(ASC.R)+" "+FTS(ASC.Z)+" "+ITS(ASC.Wing)+" "+ITS(ASC.dV));
    }
    if (param1 == "-infile") {
-      Form1->btnAutoClick(NULL);
       Form1->btnMakeInClick(NULL);
       Form1->Close();
    }
    if (param1 == "-pansym") {
-      Form1->btnAutoClick(NULL);
       Form1->btnMakeInClick(NULL);
       ShellExecute(0, "open", "Pansym98.exe", "output.in", "", SW_SHOWNORMAL);
       Form1->Close();
 
    }
    if (param1 == "-visual") {
-      Form1->btnAutoClick(NULL);
       Form1->btnMakeInClick(NULL);
       int PansymHandle = 0;
       //
@@ -464,3 +497,4 @@ void TForm1::ConvertASC(void)
    }
    Phi_ZK = Phi_ZK1[ASC.R-1];
 }
+

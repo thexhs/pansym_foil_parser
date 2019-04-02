@@ -16,7 +16,7 @@ object Form1: TForm1
   TextHeight = 13
   object btnFoil: TButton
     Left = 8
-    Top = 280
+    Top = 312
     Width = 75
     Height = 25
     Caption = 'FOIL'
@@ -47,7 +47,7 @@ object Form1: TForm1
   end
   object Button4: TButton
     Left = 8
-    Top = 408
+    Top = 440
     Width = 75
     Height = 25
     Caption = 'Get Data'
@@ -105,11 +105,28 @@ object Form1: TForm1
     Top = 16
     Width = 801
     Height = 505
-    ActivePage = TabSheet4
+    ActivePage = TabSheet5
     MultiLine = True
     Style = tsFlatButtons
-    TabIndex = 3
     TabOrder = 6
+    object TabSheet5: TTabSheet
+      Caption = 'HEAD'
+      ImageIndex = 4
+      object mHead: TMemo
+        Left = 0
+        Top = 0
+        Width = 793
+        Height = 433
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Courier New'
+        Font.Style = []
+        ParentFont = False
+        ScrollBars = ssVertical
+        TabOrder = 0
+      end
+    end
     object TabSheet1: TTabSheet
       Caption = 'Airfoil'
       object mAirfoil: TMemo
@@ -187,7 +204,7 @@ object Form1: TForm1
   end
   object btnWing: TButton
     Left = 8
-    Top = 312
+    Top = 344
     Width = 75
     Height = 25
     Caption = 'WING'
@@ -196,7 +213,7 @@ object Form1: TForm1
   end
   object btnWinglet: TButton
     Left = 8
-    Top = 344
+    Top = 376
     Width = 75
     Height = 25
     Caption = 'WINGLET'
@@ -232,7 +249,7 @@ object Form1: TForm1
   end
   object btnVisual: TButton
     Left = 8
-    Top = 376
+    Top = 408
     Width = 75
     Height = 25
     Caption = 'VISUAL'
@@ -256,16 +273,17 @@ object Form1: TForm1
     Caption = 'GET OU'
     TabOrder = 14
   end
-  object Button1: TButton
-    Left = 80
-    Top = 496
+  object btnHead: TButton
+    Left = 8
+    Top = 280
     Width = 75
     Height = 25
-    Caption = 'Button1'
+    Caption = 'HEAD'
     TabOrder = 15
+    OnClick = btnHeadClick
   end
   object OpenDialog1: TOpenDialog
-    Left = 8
-    Top = 440
+    Left = 96
+    Top = 480
   end
 end

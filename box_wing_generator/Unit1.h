@@ -38,7 +38,9 @@ __published:	// IDE-managed Components
    TButton *btnVisual;
    TButton *btnOU2GEO;
    TButton *Button10;
-        TButton *Button1;
+   TButton *btnHead;
+   TTabSheet *TabSheet5;
+   TMemo *mHead;
         void __fastcall btnFoilClick(TObject *Sender);
         void __fastcall btnPANSYMClick(TObject *Sender);
         void __fastcall rgZClick(TObject *Sender);
@@ -52,6 +54,7 @@ __published:	// IDE-managed Components
    void __fastcall btnVisualClick(TObject *Sender);
         void __fastcall FormShow(TObject *Sender);
         void __fastcall rgdVClick(TObject *Sender);
+   void __fastcall btnHeadClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);

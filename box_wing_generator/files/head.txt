@@ -1,8 +1,3 @@
-BOX WING R02
-suMekRprNchRreGplVreAitRdsGgrFneLlnTprHviS
-  1  0  1 -1 22  0  1  0  0  1  0  0  0  0
- Sk     Bk     Lk     Xc     Yc     Zc     rvr    dp     xend   Smid   dAlfkr Cx0
- 20     1      10     2.023   0.0   0.      0.05    0.1    20.    .62   0.     .0123
 P_274_15
   0  0 01  2  0 71  0  0  0   
 NE NTE NP IB IK NU IS IM IP
