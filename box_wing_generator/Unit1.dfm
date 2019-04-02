@@ -52,6 +52,7 @@ object Form1: TForm1
     Height = 25
     Caption = 'Get Data'
     TabOrder = 2
+    OnClick = Button4Click
   end
   object rgR: TRadioGroup
     Left = 8
@@ -108,6 +109,7 @@ object Form1: TForm1
     ActivePage = TabSheet5
     MultiLine = True
     Style = tsFlatButtons
+    TabIndex = 0
     TabOrder = 6
     object TabSheet5: TTabSheet
       Caption = 'HEAD'
@@ -265,13 +267,14 @@ object Form1: TForm1
     TabOrder = 13
     OnClick = btnOU2GEOClick
   end
-  object Button10: TButton
+  object btnGetOu: TButton
     Left = 88
     Top = 408
     Width = 75
     Height = 25
     Caption = 'GET OU'
     TabOrder = 14
+    OnClick = btnGetOuClick
   end
   object btnHead: TButton
     Left = 8

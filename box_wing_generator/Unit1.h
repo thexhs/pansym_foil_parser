@@ -37,7 +37,7 @@ __published:	// IDE-managed Components
    TButton *btnPANSYM;
    TButton *btnVisual;
    TButton *btnOU2GEO;
-   TButton *Button10;
+        TButton *btnGetOu;
    TButton *btnHead;
    TTabSheet *TabSheet5;
    TMemo *mHead;
@@ -55,6 +55,8 @@ __published:	// IDE-managed Components
         void __fastcall FormShow(TObject *Sender);
         void __fastcall rgdVClick(TObject *Sender);
    void __fastcall btnHeadClick(TObject *Sender);
+        void __fastcall btnGetOuClick(TObject *Sender);
+        void __fastcall Button4Click(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);

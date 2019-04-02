@@ -371,7 +371,11 @@ void __fastcall TForm1::btnMakeInClick(TObject *Sender)
                 if_remain_foil.rdbuf() << if_wing.rdbuf() <<
                 if_winglet.rdbuf() << if_trail.rdbuf();
 
+   //Close all file
+   if_config.close(); if_head.close(); if_airfoil_w_elevator.close();
+   if_remain_foil.close(); if_wing.close(); if_winglet.close(); if_trail.close();
    of_output.close();
+
    mInFile->Lines->LoadFromFile(exePath+"\output.in");
 }
 //---------------------------------------------------------------------------
@@ -409,6 +413,21 @@ void __fastcall TForm1::FormShow(TObject *Sender)
       ASC.dV = STI(param5);
       mInFile->Lines->Add(ITS(ASC.R)+" "+FTS(ASC.Z)+" "+ITS(ASC.Wing)+" "+ITS(ASC.dV));
    }
+   if (param1 == "-output") {
+      Form1->btnMakeInClick(NULL);
+      int PansymHandle = 0;
+      //
+      STARTUPINFO cif;
+      ZeroMemory(&cif,sizeof(STARTUPINFO));
+      PROCESS_INFORMATION pi;
+      //Run PANSYM in while loop
+      do {
+        CreateProcess("Pansym98.exe"," output.in",
+	   NULL,NULL,FALSE,NULL,NULL,exePath.c_str(),&cif,&pi);
+      } while (WaitForSingleObject(pi.hProcess,INFINITE));
+      Form1->btnOU2GEOClick(NULL);
+      Form1->Close();
+   }
    if (param1 == "-infile") {
       Form1->btnMakeInClick(NULL);
       Form1->Close();
@@ -417,7 +436,6 @@ void __fastcall TForm1::FormShow(TObject *Sender)
       Form1->btnMakeInClick(NULL);
       ShellExecute(0, "open", "Pansym98.exe", "output.in", "", SW_SHOWNORMAL);
       Form1->Close();
-
    }
    if (param1 == "-visual") {
       Form1->btnMakeInClick(NULL);
@@ -497,4 +515,108 @@ void TForm1::ConvertASC(void)
    }
    Phi_ZK = Phi_ZK1[ASC.R-1];
 }
+//---------------------------------------------------------------------------
+//      Get DATA from OU file
+//---------------------------------------------------------------------------
+void __fastcall TForm1::btnGetOuClick(TObject *Sender)
+{
+   Form1->ConvertASC();
+
+   int reG;
+   std::string s;
+
+   //First part - read list of AoA into alpha.txt
+
+   std::ifstream if_output((exePath+"\\output.ou").c_str());
+   std::ofstream of_alpha((exePath+"\\alpha.txt").c_str());
+   std::ofstream of_data((exePath+"\\data.txt").c_str());
+
+   //Save old buf and redirect to file
+   std::streambuf *coutbuf = std::cout.rdbuf();
+   std::cout.rdbuf(of_alpha.rdbuf());
+
+   //Skeep first&second line
+   std::getline(if_output,s);
+   std::getline(if_output,s);
+
+   std::getline(if_output,s);
+   reG = STI(s.substr(12,3).c_str());
+
+   do {
+      std::getline(if_output,s);
+   } while (s != "KRIGHTS");
+
+   //Skeep two next line
+   std::getline(if_output,s);
+   std::getline(if_output,s);
+
+   for(int i = 1; i <= reG; i++){
+      std::getline(if_output,s);
+      std::cout<<s.substr(8,7)<<std::endl;
+      std::getline(if_output,s);
+   }
+
+   // Second part - Read Data into Data.txt
+   std::cout.rdbuf(of_data.rdbuf()); //redirect to of_data
+
+   while ((!if_output.eof())) {
+      do {
+         if((if_output.eof())) break;
+         std::getline(if_output,s);
+      } while (s.find("CXV") == -1);
+      if((if_output.eof())) break;
+      std::getline(if_output,s);
+      std::cout<< s <<std::endl;
+   }
+
+   //Reset and close
+   std::cout.rdbuf(coutbuf); //reset to standart cout rdbuf
+   if_output.close();
+   of_alpha.close();
+   of_data.close();
+
+   //Last part - read into Memo data from these files
+   std::ifstream if_alpha((exePath+"\\alpha.txt").c_str());
+   std::ifstream if_data((exePath+"\\data.txt").c_str());
+
+   mHead->Clear();
+   MHLA("ALPHA     CX           CY            MZ");
+
+   std::string a; AnsiString A;
+   std::string d; AnsiString CY, CX, MZ;
+   for(int i = 1; i<=reG; i++)
+   {
+      std::getline(if_alpha,a); A = AnsiString(a.c_str());
+      std::getline(if_data,d);
+      CX = (AnsiString)d.substr(0,13).c_str();
+      CY = (AnsiString)d.substr(13,12).c_str();
+      MZ = (AnsiString)d.substr(61,12).c_str();
+      MHLA(A +" "+ CX + " "+ CY +" "+ MZ);
+   }
+   if_alpha.close();
+   if_data.close();
+
+   AnsiString filename = "R0"+ITS(ASC.R)+"0"+ITS(ASC.Wing);
+   if (ASC.Z == 0.25) filename+="025";
+   if (ASC.Z == 0.50) filename+="050";
+   if (ASC.Z == 0.75) filename+="075";
+   if (ASC.Z == 0.90) filename+="090";
+
+   if (ASC.dV == -10) filename += "m10";
+   if (ASC.dV == -8)  filename += "m08";
+   if (ASC.dV == -6)  filename += "m06";
+   if (ASC.dV == -4)  filename += "m04";
+   if (ASC.dV == -2)  filename += "m02";
+   if (ASC.dV == 0)   filename += "p00";
+   if (ASC.dV == 2)   filename += "p02";
+   if (ASC.dV == 4)   filename += "p04";
+   if (ASC.dV == 6)   filename += "p06";
+   if (ASC.dV == 8)   filename += "p08";
+   if (ASC.dV == 10)  filename += "p10";
+
+   filename += ".txt";
+
+   mHead->Lines->SaveToFile((exePath+"\\"+filename).c_str());
+}
+//---------------------------------------------------------------------------
 
