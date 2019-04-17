@@ -1,0 +1,1 @@
+Get_Cp extract X, Y, Z coords and Cp data for selected AoA and Blocks from *.ou file
