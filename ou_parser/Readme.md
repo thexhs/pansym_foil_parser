@@ -20,8 +20,12 @@ Read_block() - return List of string contain sub-block starting at prescribed li
 
 Control_Line() - return a list of int with control numbers from string passed in
 
-Read_Airfoil() - calculate linecount via control line and return block content as list of string
-Read_Body()
-Read_Wing()
-Read_Nacelle()
-Read_Jet()
+Read_Airfoil() - calculate linecount via control line and return airfoil as list of string
+
+Read_Body() - calculate linecount via control line and return fuselage as list of string
+
+Read_Wing() - calculate linecount via control line and return wing as list of string
+
+Read_Nacelle() - calculate linecount via control line and return jet nacelle (circular) as list of string
+
+Read_Jet() - calculate linecount via control line and return jet as list of string
