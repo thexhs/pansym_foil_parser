@@ -1,6 +1,7 @@
-Some helpfull function for work with PANSYM output file (*.ou)
+Some helpfull function for work with PANSYM input and output file (*.in/*.ou)
 
 Get_Cp.ipynb
+This function designed to extract pressure distribution from PANSYM ou files to Excel sheet
 
 |Function|Description|
 |---:|:---|
@@ -11,6 +12,7 @@ Get_Cp.ipynb
 |`XLSX_Cp_Dump()`|write all sections data for selected AoA in Excel *.xslx file|
 
 Split_IN.ipynb
+Some function for parsing PANSYM input file and extract useful information from it. Not all options from PANSYM input file specification was implement, but most useful was.
 
 |Function|Description|
 |---:|:---|
@@ -22,3 +24,6 @@ Split_IN.ipynb
 |`Read_Wing()`|calculate linecount via control line and return wing as list of string|
 |`Read_Nacelle()`|calculate linecount via control line and return jet nacelle (circular) as list of string|
 |`Read_Jet()`|calculate linecount via control line and return jet as list of string|
+|`Str2Coords()`|return list of float from input string|
+|`Block2Coords()`|return list of float from input list of string|
+|`Airfoil_plot()`|plot airfoil from block, e.g. from `Read_Airfoil` output|
