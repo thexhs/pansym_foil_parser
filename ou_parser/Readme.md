@@ -1,7 +1,8 @@
 Some helpfull function for work with PANSYM input and output file (*.in/*.ou)
 
-Get_Cp.ipynb
-This function designed to extract pressure distribution from PANSYM ou files to Excel sheet
+**Get_Cp.ipynb**
+
+This functions designed to extract pressure distribution (Cp) from PANSYM ou files to Excel sheet
 
 |Function|Description|
 |---:|:---|
@@ -11,7 +12,8 @@ This function designed to extract pressure distribution from PANSYM ou files to 
 |`get_Cp()`|return list of float - X,Y,Z coordinates and Cp value for selected section|
 |`XLSX_Cp_Dump()`|write all sections data for selected AoA in Excel *.xslx file|
 
-Split_IN.ipynb
+**Split_IN.ipynb**
+
 Some function for parsing PANSYM input file and extract useful information from it. Not all options from PANSYM input file specification was implement, but most useful was.
 
 |Function|Description|
